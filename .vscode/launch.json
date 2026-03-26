@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Playwright: Debug Test (Headed)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["playwright", "test", "--headed"],
+      "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Clean Allure Results",
+      "postDebugTask": "Generate and Open Allure Report"
+    },
+    {
+      "name": "Playwright: Debug Current File",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["playwright", "test", "${relativeFile}", "--headed"],
+      "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Clean Allure Results",
+      "postDebugTask": "Generate and Open Allure Report"
+    },
+    {
+      "name": "Playwright: Debug IRCTC Booking",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["playwright", "test", "tests/irctc_booking.spec.ts", "--headed"],
+      "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright",
+      "console": "integratedTerminal",
+      "preLaunchTask": "Clean Allure Results",
+      "postDebugTask": "Generate and Open Allure Report"
+    }
+  ]
+}

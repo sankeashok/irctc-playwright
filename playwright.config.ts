@@ -1,11 +1,27 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
+  testDir: './tests',
+  timeout: 300000,
+  expect: { timeout: 10000 },
+  retries: 0,
+  reporter: [
+    ['list'],
+    ['allure-playwright', { outputFolder: 'allure-results' }]
+  ],
   use: {
-    // Setting viewport to null allows the browser to size the page to its full window extent
+    baseURL: process.env.BASE_URL,
     viewport: null,
     launchOptions: {
+      channel: 'chrome',
       args: ['--start-maximized']
-    }
+    },
+    screenshot: 'on',
+    trace: 'on',
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   }
 });

@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate and Open Allure Report",
+      "type": "shell",
+      "command": "npx allure generate ./allure-results -o allure-report && start \"\" \"${workspaceFolder}\\AKS\\irctc-playwright\\allure-report\\index.html\"",
+      "options": {
+        "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright"
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "Clean Allure Results",
+      "type": "shell",
+      "command": "if exist allure-results rmdir /s /q allure-results",
+      "options": {
+        "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright"
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
+    }
+  ]
+}

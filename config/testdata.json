@@ -1,0 +1,14 @@
+{
+  "trips": {
+    "hampiExpress": {
+      "from": "KGI",
+      "to": "TNGL",
+      "date": "31/03/2026",
+      "trainNumber": "16592",
+      "trainName": "HAMPI EXPRESS",
+      "class": "Sleeper (SL)",
+      "quota": "GENERAL",
+      "dateLabel": "Tue, 31 Mar"
+    }
+  }
+}
