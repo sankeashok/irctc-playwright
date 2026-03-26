@@ -10,5 +10,14 @@
       "quota": "GENERAL",
       "dateLabel": "Tue, 31 Mar"
     }
+  },
+  "passengers": [
+    { "name": "Ashok Sanke", "age": "36", "gender": "Male" }
+  ],
+  "contact": {
+    "mobile": "9176996600"
+  },
+  "payment": {
+    "mode": "BHIM/UPI"
   }
 }

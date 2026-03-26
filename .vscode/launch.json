@@ -24,11 +24,11 @@
       "postDebugTask": "Generate and Open Allure Report"
     },
     {
-      "name": "Playwright: Debug IRCTC Booking",
+      "name": "Playwright: Debug IRCTC E2E Booking",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["playwright", "test", "tests/irctc_booking.spec.ts", "--headed"],
+      "runtimeArgs": ["playwright", "test", "tests/irctc_e2e_booking.spec.ts", "--headed"],
       "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright",
       "console": "integratedTerminal",
       "preLaunchTask": "Clean Allure Results",

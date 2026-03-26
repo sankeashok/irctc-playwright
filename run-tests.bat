@@ -9,11 +9,8 @@ npx playwright test %*
 
 echo.
 echo ============================================
-echo  Generating Allure Report
+echo  Generating and Opening Allure Report
 echo ============================================
 
 npx allure generate ./allure-results -o allure-report
-
-echo.
-echo Opening Allure Report in browser...
-start "" "%cd%\allure-report\index.html"
+npx allure open allure-report

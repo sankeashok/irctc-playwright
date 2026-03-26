@@ -10,7 +10,8 @@ export default defineConfig({
   retries: 0,
   reporter: [
     ['list'],
-    ['allure-playwright', { outputFolder: 'allure-results' }]
+    ['allure-playwright', { outputFolder: 'allure-results' }],
+    ['./utils/allure-auto-open.ts']
   ],
   use: {
     baseURL: process.env.BASE_URL,
