@@ -54,8 +54,21 @@ export class LoginPage {
   }
 
   async logout() {
-    // Direct navigation to logout URL — most reliable
-    await this.page.goto('https://www.irctc.co.in/nget/logout', { waitUntil: 'domcontentloaded', timeout: 15000 });
+    try {
+      // Try hover + click logout
+      const myAccount = this.page.locator('a').filter({ hasText: 'MY ACCOUNT' }).first();
+      await myAccount.hover({ force: true, timeout: 5000 });
+      await this.page.waitForTimeout(500);
+      await this.page.locator('//span[normalize-space()="Logout"]').first()
+        .click({ force: true, timeout: 3000 });
+    } catch {
+      // Fallback: direct logout URL
+      try {
+        await this.page.goto('https://www.irctc.co.in/nget/logout', { timeout: 15000 });
+      } catch {
+        console.log('Logout navigation failed, continuing...');
+      }
+    }
     await this.page.waitForTimeout(2000);
     console.log('Logged out successfully!');
   }

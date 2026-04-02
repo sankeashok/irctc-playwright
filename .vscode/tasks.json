@@ -4,18 +4,18 @@
     {
       "label": "Generate and Open Allure Report",
       "type": "shell",
-      "command": "npx allure generate ./allure-results -o allure-report && start \"\" \"${workspaceFolder}\\AKS\\irctc-playwright\\allure-report\\index.html\"",
+      "command": "npx allure generate ./allure-results -o allure-report; npx allure open allure-report",
       "options": {
         "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright"
       },
       "presentation": {
-        "reveal": "silent"
+        "reveal": "always"
       }
     },
     {
       "label": "Clean Allure Results",
       "type": "shell",
-      "command": "if exist allure-results rmdir /s /q allure-results",
+      "command": "if (Test-Path allure-report/history) { New-Item -ItemType Directory -Force -Path allure-results/history | Out-Null; Copy-Item -Recurse -Force allure-report/history/* allure-results/history/ }; Get-ChildItem allure-results -Exclude history -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue; exit 0",
       "options": {
         "cwd": "C:\\Users\\ASanke\\Documents\\AKS\\irctc-playwright"
       },

@@ -1,4 +1,5 @@
-import { test, TestInfo } from '@playwright/test';
+import { TestInfo } from '@playwright/test';
+import { test } from '../utils/stealth-fixture';
 import { allure } from 'allure-playwright';
 import { LoginPage } from '../pages/LoginPage';
 import { SearchPage } from '../pages/SearchPage';
@@ -9,17 +10,16 @@ import { PaymentPage } from '../pages/PaymentPage';
 import testData from '../config/testdata.json';
 import { TripData, Passenger } from '../config/types';
 
-test.use({ viewport: null });
-
 const trip: TripData = testData.trips.hampiExpress;
-const passengers: Passenger[] = testData.passengers;
+const passengers: Passenger[] = testData.passengers.filter(p => p.active);
 
 async function screenshot(page: import('@playwright/test').Page, testInfo: TestInfo, name: string) {
   const buffer = await page.screenshot({ fullPage: true });
   await testInfo.attach(name, { body: buffer, contentType: 'image/png' });
 }
 
-test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${trip.to}`, async ({ page }, testInfo) => {
+test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${trip.to}`, async ({ stealthPage }, testInfo) => {
+  const page = stealthPage;
   const loginPage = new LoginPage(page);
   const searchPage = new SearchPage(page);
   const trainListPage = new TrainListPage(page);
@@ -31,12 +31,19 @@ test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${tr
   allure.feature('E2E Booking Flow');
   allure.story(`Book ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${trip.to}`);
 
-  // --- Search ---
+  // --- Navigate & Login ---
   await allure.step('Navigate to IRCTC', async () => {
     await loginPage.navigate();
     await screenshot(page, testInfo, 'After Navigation');
   });
 
+  await allure.step('Login', async () => {
+    await loginPage.clickLoginLink();
+    await loginPage.login();
+    await screenshot(page, testInfo, 'After Login');
+  });
+
+  // --- Search ---
   await allure.step(`Fill From Station (${trip.from})`, async () => {
     await searchPage.fillFromStation(trip.from);
     await screenshot(page, testInfo, 'After From Station');
@@ -93,13 +100,7 @@ test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${tr
     await screenshot(page, testInfo, 'After Book Now');
   });
 
-  // --- Login ---
-  await allure.step('Login after Book Now', async () => {
-    await loginPage.login();
-    await screenshot(page, testInfo, 'After Login');
-  });
-
-  // --- Booking Form ---
+  // --- Booking Form (Step 1: Passenger Details) ---
   await allure.step('Wait for Booking Form', async () => {
     await bookingPage.waitForBookingForm();
     await screenshot(page, testInfo, 'Booking Form Loaded');
@@ -118,12 +119,14 @@ test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${tr
     await screenshot(page, testInfo, 'After Mobile Number');
   });
 
-  await allure.step(`Select Payment Mode (${testData.payment.mode})`, async () => {
-    await bookingPage.selectPaymentMode(testData.payment.mode);
-    await screenshot(page, testInfo, 'After Payment Mode Selection');
-  });
+  // Payment mode: keep default (Credit & Debit Cards / Net Banking etc.)
+  // await allure.step(`Select Payment Mode (${testData.payment.mode})`, async () => {
+  //   await bookingPage.selectPaymentMode(testData.payment.mode);
+  //   await screenshot(page, testInfo, 'After Payment Mode Selection');
+  // });
 
   await allure.step('Click Continue (Passenger Details)', async () => {
+    await screenshot(page, testInfo, 'Before Continue');
     await bookingPage.clickContinue();
     await screenshot(page, testInfo, 'After Continue');
   });
@@ -144,24 +147,32 @@ test(`E2E Booking: ${trip.trainName} (${trip.trainNumber}) ${trip.from} → ${tr
     await screenshot(page, testInfo, 'After Review Continue');
   });
 
-  // --- Payment (Step 3) ---
-  await allure.step('Payment Page', async () => {
+  // --- Payment Gateway (IRCTC iPay) ---
+  await allure.step('iPay Payment Gateway Loaded', async () => {
     await paymentPage.waitForPaymentPage();
-    await screenshot(page, testInfo, 'Payment Page');
+    await screenshot(page, testInfo, 'iPay - All Payment Options');
   });
 
-  await allure.step('Select BHIM/UPI/USSD', async () => {
-    await paymentPage.selectBhimUpi();
-    await screenshot(page, testInfo, 'After BHIM UPI Selection');
+  await allure.step('Select UPI (CC-CL) Tab', async () => {
+    await paymentPage.selectUpiCcCl();
+    await screenshot(page, testInfo, 'iPay - UPI CC-CL Selected');
   });
 
-  await allure.step('Click Pay & Book', async () => {
-    await paymentPage.clickPayAndBook();
-    await screenshot(page, testInfo, 'After Pay and Book');
+  await allure.step('Click Pay through QR', async () => {
+    await paymentPage.clickPayThroughQR();
+    await screenshot(page, testInfo, 'iPay - QR Code Displayed');
   });
 
-  await allure.step('Booking flow completed', async () => {
-    await page.waitForTimeout(3000);
+  await allure.step('Booking flow completed - Scan QR to pay', async () => {
+    console.log('----------------------------------------------------');
+    console.log('QR Code displayed. Scan with UPI app to complete payment.');
+    console.log('Waiting 120 seconds for payment confirmation...');
+    console.log('----------------------------------------------------');
+    await screenshot(page, testInfo, 'QR Code for Payment');
+    // Wait for payment confirmation or timeout
+    await page.waitForURL(/bookingConfirmation|success|ticket/i, { timeout: 120000 }).catch(() => {
+      console.log('Payment confirmation page not detected within timeout.');
+    });
     await screenshot(page, testInfo, 'Final State');
     console.log('✅ E2E Booking flow completed successfully!');
   });

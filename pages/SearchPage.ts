@@ -42,7 +42,7 @@ export class SearchPage {
     await this.page.keyboard.press('Backspace');
     await this.dateInput.pressSequentially(date, { delay: 50 });
     await this.page.keyboard.press('Tab');
-    await this.page.locator('.ui-datepicker:visible').waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
+    await this.page.waitForTimeout(500);
   }
 
   async selectClass(className: string) {

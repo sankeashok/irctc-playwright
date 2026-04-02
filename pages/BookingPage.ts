@@ -37,12 +37,12 @@ export class BookingPage {
 
   async selectPaymentMode(mode: string) {
     if (mode === 'BHIM/UPI') {
-      // PrimeNG hides the actual <input>, the clickable element is div.ui-radiobutton-box
-      // Find the radio button row containing "BHIM/UPI" text, then click its radiobutton-box
-      const bhimRow = this.page.locator('tr').filter({ hasText: /BHIM\/UPI/ }).first();
+      const bhimRow = this.page.locator('tr').filter({ hasText: /BHIM.*UPI/ }).first();
       await bhimRow.scrollIntoViewIfNeeded();
       await bhimRow.locator('.ui-radiobutton-box').first().click({ timeout: 5000 });
-      await this.page.waitForTimeout(1000);
+      // Verify selection registered
+      await bhimRow.locator('.ui-state-active').first()
+        .waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
     }
   }
 
@@ -50,5 +50,8 @@ export class BookingPage {
     const continueBtn = this.page.locator('button.train_Search.btnDefault').filter({ hasText: /Continue/i }).first();
     await continueBtn.scrollIntoViewIfNeeded();
     await continueBtn.click({ force: true, timeout: 10000 });
+    // Wait for IRCTC to process — can take up to 60s
+    await this.page.locator('.my-loading, .dimmer').first()
+      .waitFor({ state: 'hidden', timeout: 60000 }).catch(() => {});
   }
 }

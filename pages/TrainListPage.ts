@@ -23,19 +23,16 @@ export class TrainListPage {
 
   async selectClassTab(trainNumber: string, className: string) {
     const card = this.getTrainCard(trainNumber);
-    // Click the pre-avl div containing the class name (always visible on load)
     await card.locator('.pre-avl').filter({ hasText: className }).first()
       .click({ force: true, timeout: 10000 });
-    // Wait for availability dates to load
-    await card.locator('.pre-avl.selected-class').first()
-      .waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await this.page.waitForTimeout(2000);
   }
 
   async selectDate(trainNumber: string, dateText: string) {
     const card = this.getTrainCard(trainNumber);
     await card.locator('.pre-avl').filter({ hasText: dateText }).first()
       .click({ force: true, timeout: 10000 });
-    await this.page.waitForTimeout(1000);
+    await this.page.waitForTimeout(500);
   }
 
   async clickBookNow() {

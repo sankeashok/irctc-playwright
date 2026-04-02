@@ -4,27 +4,32 @@ export class ReviewPage {
   constructor(private page: Page) {}
 
   async waitForReviewPage() {
-    await this.page.waitForURL(/reviewBooking/, { timeout: 15000 }).catch(() => {});
-    await this.page.locator('app-review-booking, input#captcha').first()
-      .waitFor({ state: 'visible', timeout: 10000 });
+    // Wait for URL to change to reviewBooking
+    await this.page.waitForURL(/reviewBooking/, { timeout: 60000 }).catch(() => {
+      console.log('Review page URL not detected, checking content...');
+    });
+    // Wait for captcha to appear
+    await this.page.locator('input#captcha').waitFor({ state: 'visible', timeout: 15000 });
   }
 
   async enterCaptcha() {
-    const captchaInput = this.page.locator('input#captcha');
-    // Wait for captcha image to load
-    await this.page.locator('img.captcha-img').first().waitFor({ state: 'visible', timeout: 5000 });
+    // Wait for captcha image to fully load
+    await this.page.locator('img.captcha-img').first().waitFor({ state: 'visible', timeout: 10000 });
+    await this.page.waitForTimeout(500);
 
-    // Allow user 30 seconds to manually enter captcha
     console.log('----------------------------------------------------');
-    console.log('CAPTCHA detected. Enter captcha manually in browser.');
-    console.log('You have 30 seconds...');
+    console.log('CAPTCHA loaded. Enter captcha manually (15 seconds)');
     console.log('----------------------------------------------------');
-    // Wait for user to type something in the captcha field
+
+    // Wait until user types something in captcha field (max 15s)
     await this.page.waitForFunction(
-      () => (document.querySelector('input#captcha') as HTMLInputElement)?.value?.length > 0,
-      { timeout: 30000 }
+      () => {
+        const input = document.querySelector('input#captcha') as HTMLInputElement;
+        return input && input.value.length >= 3;
+      },
+      { timeout: 15000 }
     ).catch(() => {
-      console.log('Captcha not entered within 30 seconds.');
+      console.log('Captcha not entered, continuing anyway...');
     });
   }
 

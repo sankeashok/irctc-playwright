@@ -12,7 +12,9 @@
     }
   },
   "passengers": [
-    { "name": "Ashok Sanke", "age": "36", "gender": "Male" }
+    { "name": "Ashok Sanke", "age": "36", "gender": "Male", "active": true },
+    { "name": "Priya Sanke", "age": "32", "gender": "Female", "active": false },
+    { "name": "Ravi Kumar", "age": "60", "gender": "Male", "active": false }
   ],
   "contact": {
     "mobile": "9176996600"
